@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`bull-reloadable-config refuses non semver version 1`] = `[SyntaxError: thisisbadversion is not a valid semver]`;
+
+exports[`bull-reloadable-config throws if a job as no _id 1`] = `[SyntaxError: Each job need an _id]`;
+
+exports[`bull-reloadable-config throws if a job as no options 1`] = `[SyntaxError: Each job need an _id]`;
+
+exports[`bull-reloadable-config throws if two jobs has the same ids 1`] = `[SyntaxError: Each job need an uniq _id found id twice]`;
