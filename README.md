@@ -62,4 +62,4 @@ This lib is tested with huge amount of jobs (10,000 in the tests) in less than a
 
 ## TODO
 
-[ ] Allow to inject a redis client
+* [ ] Allow to inject a redis client
