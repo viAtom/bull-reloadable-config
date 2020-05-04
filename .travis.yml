@@ -1,6 +1,8 @@
 os:
   - linux
 language: node_js
+services:
+  - redis-server
 node_js:
   - "12"
 after_success:
