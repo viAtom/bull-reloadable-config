@@ -10,6 +10,7 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "declaration": true,
     "rootDir": "./src",
     "strict": true,
     "removeComments": false,

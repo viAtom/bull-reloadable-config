@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Deply a reloadable bull config with code",
   "main": "build/index.js",
+  "files": [
+    "build"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "eslint src --fix",
@@ -21,9 +24,24 @@
   "bugs": {
     "url": "https://github.com/jtassin/bull-reloadable-config/issues"
   },
+  "release-it": {
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
+      }
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": true
+    }
+  },
   "homepage": "https://github.com/jtassin/bull-reloadable-config#readme",
   "devDependencies": {
     "@keplr/eslint-config-backend-node": "^1.4.1",
+    "@release-it/conventional-changelog": "^1.1.4",
     "@types/bull": "^3.12.2",
     "@types/jest": "^25.2.1",
     "@types/semver": "^7.1.0",
@@ -32,6 +50,7 @@
     "husky": "^4.2.5",
     "jest": "^25.5.3",
     "lint-staged": "^10.2.2",
+    "release-it": "^13.5.8",
     "typescript": "^3.8.3"
   },
   "dependencies": {
