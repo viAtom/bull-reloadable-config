@@ -15,7 +15,7 @@ export interface BullConfig {
    */
   name?: string;
   /**
-   * @field _version: a semver version of theis job
+   * @field _version: a semver version of this job
    */
   data: { _version: string };
   opts: { jobId: Bull.JobId } & Bull.JobOptions;
