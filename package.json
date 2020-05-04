@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "eslint src --fix",
+    "lint": "eslint --fix --ext ts  src",
     "test": "jest src"
   },
   "repository": {
@@ -38,6 +38,7 @@
       "publish": true
     }
   },
+  "prettier": "@keplr/eslint-config-backend-node/prettierrc.json",
   "homepage": "https://github.com/jtassin/bull-reloadable-config#readme",
   "devDependencies": {
     "@keplr/eslint-config-backend-node": "^1.4.1",
