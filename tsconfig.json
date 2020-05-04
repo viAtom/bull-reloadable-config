@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "outDir": "build",
+    "target": "es2019",
+    "lib": ["esnext"],
+    "module": "commonjs",
+    "typeRoots": ["node_modules/@types"],
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "rootDir": "./src",
+    "strict": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": ["./src/**/*.ts"]
+}
