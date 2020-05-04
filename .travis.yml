@@ -6,4 +6,5 @@ services:
 node_js:
   - "12"
 after_success:
+  - npm run lint -- --no-fix
   - npm run test -- --coverage
