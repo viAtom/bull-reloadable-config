@@ -1,3 +1,10 @@
+## [0.0.7](https://github.com/jtassin/bull-reloadable-config/compare/0.0.6...0.0.7) (2020-05-07)
+
+
+### Bug Fixes
+
+* **type:** fix data type ([a779445](https://github.com/jtassin/bull-reloadable-config/commit/a779445d1c080d931b9033b377fed7968de5a08d))
+
 ## [0.0.6](https://github.com/jtassin/bull-reloadable-config/compare/0.0.5...0.0.6) (2020-05-07)
 
 ## [0.0.5](https://github.com/jtassin/bull-reloadable-config/compare/0.0.4...0.0.5) (2020-05-07)
