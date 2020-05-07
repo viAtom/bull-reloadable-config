@@ -25,6 +25,7 @@
     "url": "https://github.com/jtassin/bull-reloadable-config/issues"
   },
   "release-it": {
+    "after:bump": "npm run build",
     "plugins": {
       "@release-it/conventional-changelog": {
         "preset": "angular",
