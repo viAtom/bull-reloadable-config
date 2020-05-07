@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/jtassin/bull-reloadable-config/compare/0.1.1...0.1.2) (2020-05-07)
+
+
+### Reverts
+
+* Revert "feat: support of bullmqBreaking Change: no more bull dependency" ([9c7090b](https://github.com/jtassin/bull-reloadable-config/commit/9c7090b3ad55f6b89762a5cc2d767b539f9e5028))
+
 ## [0.1.1](https://github.com/jtassin/bull-reloadable-config/compare/0.0.7...0.1.1) (2020-05-07)
 
 
