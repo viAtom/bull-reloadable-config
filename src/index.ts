@@ -1,8 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import type Bull from 'bull';
 import Semver from 'semver';
 // eslint-disable-next-line no-duplicate-imports
-import Queue from 'bull';
+import { Queue, JobsOptions, Job , QueueOptions} from 'bullmq';
 import pMap from 'p-map';
 
 export interface BullConfig {
@@ -13,17 +12,24 @@ export interface BullConfig {
   /**
    * The job name
    */
-  name?: string;
+  name: string;
   /**
    * @field _version: a semver version of this job
    */
   data: { [k: string]: unknown; _version: string };
-  opts: { jobId: Bull.JobId } & Bull.JobOptions;
+  opts: { jobId: Required<JobsOptions>['jobId'] } & JobsOptions;
 }
 
-const RELOADABLE_STATUSES: Bull.JobStatus[] = ['waiting', 'delayed', 'active'];
+const RELOADABLE_STATUSES: (
+  | 'active'
+  | 'delayed'
+  | 'completed'
+  | 'failed'
+  | 'waiting'
+  | 'unknown'
+)[] = ['waiting', 'delayed', 'active'];
 
-function sameConfig(config: BullConfig, job: Bull.Job) {
+function sameConfig(config: BullConfig, job: Job) {
   for (const key in config.opts) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore,@typescript-eslint/ban-ts-comment
     //@ts-ignore to fix
@@ -44,7 +50,7 @@ function sameConfig(config: BullConfig, job: Bull.Job) {
  */
 export async function reloadConfig(
   queueName: string,
-  queueOptions: Bull.QueueOptions,
+  queueOptions: QueueOptions,
   configs: BullConfig[],
   deleteExtraJobs = false,
   concurrency = 5000,
@@ -71,7 +77,8 @@ export async function reloadConfig(
   );
   const queue = new Queue<BullConfig['data']>(queueName, queueOptions);
 
-  const jobs: Bull.Job<BullConfig['data']>[] = await queue.getJobs(
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const jobs: Job<BullConfig['data']>[] = await queue.getJobs(
     RELOADABLE_STATUSES,
   );
 
@@ -87,23 +94,15 @@ export async function reloadConfig(
         if (sameConfig(config, existingJob)) {
           maintenancePromises.push(() => existingJob.update(config.data));
         } else {
-          maintenancePromises.push(() => existingJob.remove());
-          maintenancePromises.push(async () => {
-            if (config.name) {
-              await queue.add(config.name, config.data, config.opts);
-            } else {
-              await queue.add(config.data, config.opts);
-            }
+          maintenancePromises.push(async () => { 
+            await existingJob.remove() 
+            await queue.add(config.name, config.data, config.opts);
           });
         }
       }
     } else {
       maintenancePromises.push(async () => {
-        if (config.name) {
-          await queue.add(config.name, config.data, config.opts);
-        } else {
-          await queue.add(config.data, config.opts);
-        }
+        await queue.add(config.name, config.data, config.opts);
       });
     }
   });
@@ -111,7 +110,7 @@ export async function reloadConfig(
   if (deleteExtraJobs) {
     jobs.forEach(job => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (!configsById[job.id]) {
+      if (!job.id || !configsById[job.id]) {
         maintenancePromises.push(() => job.remove());
       }
     });
