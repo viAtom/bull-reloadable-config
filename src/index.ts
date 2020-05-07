@@ -70,7 +70,6 @@ export async function reloadConfig(
     {},
   );
   const queue = new Queue<BullConfig['data']>(queueName, queueOptions);
-  const jobsToCreate: BullConfig[] = [];
 
   const jobs: Bull.Job<BullConfig['data']>[] = await queue.getJobs(
     RELOADABLE_STATUSES,
@@ -89,11 +88,23 @@ export async function reloadConfig(
           maintenancePromises.push(() => existingJob.update(config.data));
         } else {
           maintenancePromises.push(() => existingJob.remove());
-          jobsToCreate.push(config);
+          maintenancePromises.push(async () => {
+            if (config.name) {
+              await queue.add(config.name, config.data, config.opts);
+            } else {
+              await queue.add(config.data, config.opts);
+            }
+          });
         }
       }
     } else {
-      jobsToCreate.push(config);
+      maintenancePromises.push(async () => {
+        if (config.name) {
+          await queue.add(config.name, config.data, config.opts);
+        } else {
+          await queue.add(config.data, config.opts);
+        }
+      });
     }
   });
 
@@ -106,10 +117,6 @@ export async function reloadConfig(
     });
   }
   await pMap(maintenancePromises, t => t(), { concurrency });
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore,@typescript-eslint/ban-ts-comment
-  //@ts-ignore does not exists in the types
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  await queue.addBulk(jobsToCreate);
 
   await queue.close();
 }
