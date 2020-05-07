@@ -1,3 +1,10 @@
+## [0.0.5](https://github.com/jtassin/bull-reloadable-config/compare/0.0.4...0.0.5) (2020-05-07)
+
+
+### Bug Fixes
+
+* **types:** add npm run build on release-process ([47f94ad](https://github.com/jtassin/bull-reloadable-config/commit/47f94ad7dbbac5bac0ba81bf690b0703f23753e8))
+
 ## [0.0.4](https://github.com/jtassin/bull-reloadable-config/compare/0.0.3...0.0.4) (2020-05-07)
 
 
