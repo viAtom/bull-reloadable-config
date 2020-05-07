@@ -15,6 +15,8 @@ npm i bull-reloadable-config
 In your projet, reload your config this way : 
 
 ```ts
+import { reloadConfig } from 'bull-reloadable-config';
+
 const userConfigs = [
     {
         data: { _version: '1.0.4', type: 'logout', logoutUserId: 'userId' },
