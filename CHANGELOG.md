@@ -1,3 +1,5 @@
+## [0.1.3](https://github.com/jtassin/bull-reloadable-config/compare/0.1.2...0.1.3) (2020-05-07)
+
 ## [0.1.2](https://github.com/jtassin/bull-reloadable-config/compare/0.1.1...0.1.2) (2020-05-07)
 
 
