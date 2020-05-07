@@ -1,6 +1,6 @@
 # Bull reloadable config
 
-This libray allow you to manage a [bullmq](https://github.com/taskforcesh/bullmq) configuration as some code.
+This libray allow you to manage a [bull](https://github.com/OptimalBits/bull/) configuration as some code.
 Each time your application is redeployed, you can reload the configuration of the jobs.
 
 This is usefulll for delay/cron or schedulded jobs 

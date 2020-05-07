@@ -1,4 +1,4 @@
-import { Queue } from 'bullmq';
+import Queue from 'bull';
 
 import { reloadConfig, BullConfig } from '..';
 
@@ -18,7 +18,9 @@ describe('bull-reloadable-config', () => {
   });
 
   afterEach(async () => {
-    // await queue.clean(0, 1000);
+    await queue.clean(0);
+    await queue.empty();
+    await extraQueue.empty();
   });
 
   afterAll(async () => {
@@ -50,14 +52,10 @@ describe('bull-reloadable-config', () => {
   it('throws if two jobs has the same ids', async () => {
     const configs: BullConfig[] = [
       {
-        name: 'jn',
-
         data: { _version: VERSION_0_0_4 },
         opts: { jobId: 'id' },
       },
       {
-        name: 'jn2',
-
         data: { _version: VERSION_0_0_4 },
         opts: { jobId: 'id' },
       },
@@ -72,7 +70,6 @@ describe('bull-reloadable-config', () => {
     const jobId = 'myjobid';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
         data: { _version: VERSION_0_0_4, ...extraData },
         opts: { jobId },
       },
@@ -86,7 +83,6 @@ describe('bull-reloadable-config', () => {
     const jobId = 'myjobid';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
         data: { _version: VERSION_0_0_4 },
         opts: { jobId, attempts: 5, delay: 8 },
       },
@@ -115,8 +111,6 @@ describe('bull-reloadable-config', () => {
     const jobId = 'myjobid';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
-
         data: { _version: VERSION_0_0_4, ...extraData },
         opts: { jobId },
       },
@@ -127,8 +121,6 @@ describe('bull-reloadable-config', () => {
 
     await reloadConfig(queueName, queueOptions, [
       {
-        name: 'jn',
-
         data: { _version: '0.0.5', ...extraData },
         opts: { jobId, attempts: 5, delay: 8 },
       },
@@ -143,8 +135,6 @@ describe('bull-reloadable-config', () => {
     const jobId = 'myjobid';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
-
         data: { _version: '0.0.5', ...extraData },
         opts: { jobId },
       },
@@ -155,8 +145,6 @@ describe('bull-reloadable-config', () => {
 
     await reloadConfig(queueName, queueOptions, [
       {
-        name: 'jn',
-
         data: { _version: VERSION_0_0_4, ...extraData },
         opts: { jobId },
       },
@@ -170,8 +158,6 @@ describe('bull-reloadable-config', () => {
     const jobId = 'myjobid';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
-
         data: { _version: '0.0.5', ...extraData },
         opts: { jobId },
       },
@@ -182,8 +168,6 @@ describe('bull-reloadable-config', () => {
 
     await reloadConfig(queueName, queueOptions, [
       {
-        name: 'jn',
-
         force: true,
         data: { _version: VERSION_0_0_4, ...extraData },
         opts: { jobId },
@@ -199,8 +183,6 @@ describe('bull-reloadable-config', () => {
     const otherJobId = 'otherJobId';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
-
         data: { _version: VERSION_0_0_4, ...extraData },
         opts: { jobId },
       },
@@ -214,7 +196,6 @@ describe('bull-reloadable-config', () => {
       queueOptions,
       [
         {
-          name: 'jn',
           data: { _version: VERSION_0_0_4, ...extraData },
           opts: { jobId: otherJobId },
         },
@@ -229,7 +210,6 @@ describe('bull-reloadable-config', () => {
       queueOptions,
       [
         {
-          name: 'jn',
           data: { _version: VERSION_0_0_4, ...extraData },
           opts: { jobId: otherJobId },
         },
@@ -246,7 +226,6 @@ describe('bull-reloadable-config', () => {
     let configs: BullConfig[] = [];
     for (let i = 0; i < count / 2; i += 1) {
       configs.push({
-        name: 'jn',
         data: { _version: VERSION_0_0_4 },
         opts: { jobId: `i${i}` },
       });
@@ -254,36 +233,23 @@ describe('bull-reloadable-config', () => {
     await reloadConfig(queueName, queueOptions, configs);
     configs = [
       {
-        name: 'jn',
-
         data: { _version: VERSION_0_0_4 },
         opts: { jobId: 'd1', delay: 3600 },
       },
       {
-        name: 'jn2',
-
         data: { _version: VERSION_0_0_4 },
         opts: { jobId: 'd2', delay: 8 },
       },
     ];
     for (let i = 0; i < count; i += 1) {
       configs.push({
-        name: 'jn',
         data: { _version: '0.0.5' },
         opts: { jobId: `i${i}` },
       });
     }
     await reloadConfig(queueName, queueOptions, configs);
 
-    const jobCount = await queue.getJobCounts(
-      'active',
-      'delayed',
-      'completed',
-      'failed',
-      'waiting',
-      'paused',
-      'unknown',
-    );
+    const jobCount = await queue.getJobCounts();
     expect(jobCount).toEqual({
       active: 0,
       completed: 0,
@@ -299,7 +265,6 @@ describe('bull-reloadable-config', () => {
     const jobId = 'myjobid';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
         data: { _version: 'thisisbadversion', ...extraData },
         opts: { jobId },
       },
@@ -314,8 +279,6 @@ describe('bull-reloadable-config', () => {
     const jobId = 'myjobid';
     const configs: BullConfig[] = [
       {
-        name: 'jn',
-
         data: { _version: VERSION_0_0_4, ...extraData },
         opts: { jobId },
       },
@@ -327,7 +290,6 @@ describe('bull-reloadable-config', () => {
 
     await reloadConfig(queueName, queueOptions, [
       {
-        name: 'jn',
         data: { _version: '0.0.5', ...extraData },
         opts: { jobId },
       },
