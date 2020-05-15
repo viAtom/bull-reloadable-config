@@ -58,7 +58,7 @@
   "dependencies": {
     "p-map": "^4.0.0",
     "semver": "^7.3.2",
-    "ts-jest": "^25.4.0"
+    "ts-jest": "^26.0.0"
   },
   "peerDependencies": {
     "bull": "^3.0.0"
