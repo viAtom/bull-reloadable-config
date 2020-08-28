@@ -17,7 +17,7 @@ export interface BullConfig {
   /**
    * @field _version: a semver version of this job
    */
-  data: { [k: string]: unknown; _version: string };
+  data: { [k: string]: unknown; _version?: string } | any[];
   opts: { jobId: Bull.JobId } & Bull.JobOptions;
 }
 
@@ -51,7 +51,11 @@ export async function reloadConfig(
 ) {
   const configsById = configs.reduce<{ [id: string]: BullConfig }>(
     (acc, entry) => {
-      if (!Semver.valid(entry.data._version)) {
+      if (
+        '_version' in entry.data &&
+        entry.data._version &&
+        !Semver.valid(entry.data._version)
+      ) {
         throw new SyntaxError(`${entry.data._version} is not a valid semver`);
       }
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -81,6 +85,10 @@ export async function reloadConfig(
     const existingJob = jobs.find(job => job.id === config.opts.jobId);
     if (existingJob) {
       if (
+        !('_version' in config.data) ||
+        !('_version' in existingJob.data) ||
+        !config.data._version ||
+        !existingJob.data._version ||
         Semver.gt(config.data._version, existingJob.data._version) ||
         config.force
       ) {
