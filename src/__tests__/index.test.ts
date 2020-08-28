@@ -1,5 +1,4 @@
 import Queue from 'bull';
-import Redis from 'ioredis';
 
 import { reloadConfig, BullConfig } from '..';
 
@@ -121,6 +120,38 @@ describe('bull-reloadable-config', () => {
     await reloadConfig(queueName, queueOptions, configs);
     const job = await queue.getJob(jobId);
     expect(job!.name).toBe('Heisenberg');
+  });
+
+  it('recreate a repeatable job', async () => {
+    const extraData = { a: 'g' };
+    const jobId = 'myjobid';
+    const configs: BullConfig[] = [
+      {
+        data: { _version: VERSION_0_0_4, ...extraData },
+        opts: { jobId, repeat: { every: 5 } },
+      },
+    ];
+    await reloadConfig(queueName, queueOptions, configs);
+    let job = (await queue.getRepeatableJobs())[0];
+    expect(job).toEqual(expect.objectContaining({
+      id: 'myjobid',
+      every: 5,
+    }));
+
+    await reloadConfig(queueName, queueOptions, [
+      {
+        data: { _version: '0.0.5', ...extraData },
+        opts: { jobId, repeat: { every: 8 } },
+      },
+    ]);
+    job = (await queue.getRepeatableJobs())[0];
+    expect(job).toEqual(expect.objectContaining({
+      id: 'myjobid',
+      every: 8,
+    }));
+    // job = await queue.getJob(jobId);
+    // expect(job!.data).toEqual({ _version: '0.0.5', ...extraData });
+    // expect(job!.opts).toMatchObject({ attempts: 5, delay: 8 });
   });
 
   it('recreate a job in the higher version with changes', async () => {

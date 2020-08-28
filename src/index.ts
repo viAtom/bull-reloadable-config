@@ -95,8 +95,8 @@ export async function reloadConfig(
         if (sameConfig(config, existingJob)) {
           maintenancePromises.push(() => existingJob.update(config.data));
         } else {
-          maintenancePromises.push(() => existingJob.remove());
           maintenancePromises.push(async () => {
+            await existingJob.remove()
             if (config.name) {
               await queue.add(config.name, config.data, config.opts);
             } else {
