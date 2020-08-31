@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/jtassin/bull-reloadable-config/compare/0.1.3...0.2.0) (2020-08-31)
+
+
+### Features
+
+* data can be non object without __version ([c943791](https://github.com/jtassin/bull-reloadable-config/commit/c94379124590a4315cd91240531596bcbfc27a51))
+
 ## [0.1.3](https://github.com/jtassin/bull-reloadable-config/compare/0.1.2...0.1.3) (2020-05-07)
 
 ## [0.1.2](https://github.com/jtassin/bull-reloadable-config/compare/0.1.1...0.1.2) (2020-05-07)
