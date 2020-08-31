@@ -17,6 +17,7 @@ export interface BullConfig {
   /**
    * @field _version: a semver version of this job
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: { [k: string]: unknown; _version?: string } | any[];
   opts: { jobId: Bull.JobId } & Bull.JobOptions;
 }
