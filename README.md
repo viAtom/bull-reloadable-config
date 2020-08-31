@@ -15,6 +15,8 @@ npm i bull-reloadable-config
 In your projet, reload your config this way : 
 
 ```ts
+const queueOptions = { redis: new Redis() }; // We can use here createClient in order to share your redis connections
+
 import { reloadConfig } from 'bull-reloadable-config';
 
 const userConfigs = [
@@ -62,6 +64,3 @@ await reloadConfig('paymentsQueue', queueOptions, configs);
 
 This lib is tested with huge amount of jobs (10,000 in the tests) in less than a dozen of seconds. 
 
-## TODO
-
-* [ ] Allow to inject a redis client

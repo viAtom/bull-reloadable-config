@@ -28,6 +28,22 @@ describe('bull-reloadable-config', () => {
     await extraQueue.close();
   });
 
+  it('should accept createClient as an option', async () => {
+    const extraData = { a: 'g' };
+    const jobId = 'myjobid';
+    const configs: BullConfig[] = [
+      {
+        data: { _version: VERSION_0_0_4, ...extraData },
+        opts: { jobId },
+      },
+    ];
+    const createClient = jest.fn().mockReturnValue(queue.client);
+    await reloadConfig(queueName, { createClient }, configs);
+    const job = await queue.getJob(jobId);
+    expect(job!.data).toEqual({ _version: VERSION_0_0_4, ...extraData });
+    expect(createClient).toHaveBeenCalledWith('client', expect.any(Object))
+  });
+
   it('throws if a job as no options', async () => {
     const configs: BullConfig[] = [
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -106,6 +122,38 @@ describe('bull-reloadable-config', () => {
     expect(job!.name).toBe('Heisenberg');
   });
 
+  it('recreate a repeatable job', async () => {
+    const extraData = { a: 'g' };
+    const jobId = 'myjobid';
+    const configs: BullConfig[] = [
+      {
+        data: { _version: VERSION_0_0_4, ...extraData },
+        opts: { jobId, repeat: { every: 5 } },
+      },
+    ];
+    await reloadConfig(queueName, queueOptions, configs);
+    let job = (await queue.getRepeatableJobs())[0];
+    expect(job).toEqual(expect.objectContaining({
+      id: 'myjobid',
+      every: 5,
+    }));
+
+    await reloadConfig(queueName, queueOptions, [
+      {
+        data: { _version: '0.0.5', ...extraData },
+        opts: { jobId, repeat: { every: 8 } },
+      },
+    ]);
+    job = (await queue.getRepeatableJobs())[0];
+    expect(job).toEqual(expect.objectContaining({
+      id: 'myjobid',
+      every: 8,
+    }));
+    // job = await queue.getJob(jobId);
+    // expect(job!.data).toEqual({ _version: '0.0.5', ...extraData });
+    // expect(job!.opts).toMatchObject({ attempts: 5, delay: 8 });
+  });
+
   it('recreate a job in the higher version with changes', async () => {
     const extraData = { a: 'g' };
     const jobId = 'myjobid';
@@ -128,6 +176,45 @@ describe('bull-reloadable-config', () => {
     job = await queue.getJob(jobId);
     expect(job!.data).toEqual({ _version: '0.0.5', ...extraData });
     expect(job!.opts).toMatchObject({ attempts: 5, delay: 8 });
+  });
+
+  it('always recreate a job if no version', async () => {
+    const extraData = { a: 'g' };
+    const jobId = 'myjobid';
+    const configs: BullConfig[] = [
+      {
+        data: {  ...extraData },
+        opts: { jobId },
+      },
+    ];
+    await reloadConfig(queueName, queueOptions, configs);
+    let job = await queue.getJob(jobId);
+    expect(job!.data).toEqual({ ...extraData });
+
+    await reloadConfig(queueName, queueOptions, [
+      {
+        data: {  ...extraData },
+        opts: { jobId, attempts: 5, delay: 8 },
+      },
+    ]);
+    job = await queue.getJob(jobId);
+    expect(job!.data).toEqual({  ...extraData });
+    expect(job!.opts).toMatchObject({ attempts: 5, delay: 8 });
+  });
+
+  it('accept array as data', async () => {
+    const extraData = { a: 'g' };
+    const jobId = 'myjobid';
+    const configs: BullConfig[] = [
+      {
+        data: [extraData],
+        opts: { jobId },
+      },
+    ];
+    await reloadConfig(queueName, queueOptions, configs);
+    const job = await queue.getJob(jobId);
+    expect(job!.data).toEqual([extraData ]);
+
   });
 
   it('does not recreate a job in the lower version', async () => {
