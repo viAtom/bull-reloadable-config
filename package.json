@@ -46,7 +46,7 @@
     "@release-it/conventional-changelog": "1.1.4",
     "@types/bull": "3.14.2",
     "@types/jest": "25.2.1",
-    "@types/semver": "7.1.0",
+    "@types/semver": "7.3.4",
     "bull": "3.18.0",
     "eslint": "6.8.0",
     "husky": "4.2.5",
